@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using Aspose.Cells;
 using CSD.Dal.DataConnection;
 using CSD.Dal.Entity;
+using CSD.Web.Helpers;
+using CSD.Web.ViewModels;
 
 namespace CSD.Web.Controllers
 {
@@ -35,7 +40,7 @@ namespace CSD.Web.Controllers
             }
 
             driver.StatsPerDays = db.StatsPerDay.Where(w => w.DriverId == driver.Id).ToList();
-            
+
 
             return View(driver);
         }
@@ -118,6 +123,52 @@ namespace CSD.Web.Controllers
             db.Drivers.Remove(driver);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+
+        public ActionResult ExportExcelSheet()
+        {
+            try
+            {
+                var drivers = db.Drivers.ToList();
+
+                Workbook workbook = ExcelHelper.GetExcelGeneratedData(drivers);
+                // Saves the excel file
+                var memoryStream = new MemoryStream();
+                workbook.Save(memoryStream, SaveFormat.Xlsx);
+
+                memoryStream.Seek(0, SeekOrigin.Begin);
+
+                return File(memoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "GeneratedData.xlsx");
+            }
+            catch (Exception e)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+        }
+
+        public ActionResult TotalGeneratedData()
+        {
+            try
+            {
+                var drivers = db.Drivers.ToList();
+
+                Workbook workbook = ExcelHelper.GetExcelGeneratedData(drivers);
+
+                Workbook totalWorkBook = ExcelHelper.GetExcelTotalData(drivers, workbook);
+
+                // Saves the excel file
+                var memoryStream = new MemoryStream();
+                totalWorkBook.Save(memoryStream, SaveFormat.Xlsx);
+
+                memoryStream.Seek(0, SeekOrigin.Begin);
+
+                return File(memoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "TotalGeneratedData.xlsx");
+            }
+            catch (Exception e)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
         }
 
         protected override void Dispose(bool disposing)

@@ -12,7 +12,7 @@ namespace CSD.Dal.Entity
         public string LicensePlate { get; set; }
 
         // Navigation
-        public ICollection<StatsPerDay> StatsPerDays { get; set; }
+        public virtual ICollection<StatsPerDay> StatsPerDays { get; set; }
 
         public Driver(string licensePlate)
         {

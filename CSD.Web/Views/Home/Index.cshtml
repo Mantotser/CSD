@@ -9,14 +9,16 @@
     <p class="lead textmiddle">Department of Business Administration, University of West Attica</p>
 </div>
 
-@*<div class="row">
+<div class="row">
     <div class="col-md-12">
-        <h2>CRPM - Getting started</h2>
-        <p>
-            CRPM (Customized Recomendator of Privacy Model) is a ASP.Net MVC web application. It was developed using Microsoft Visual Studio Community 2017 with C# as the main programming language.
-            </br>
-            The tool helps knowledgeable or not data holders and researchers find the precise privacy model their dataset need. Specifically, data holders with poor knowledge for anonymization could help them find with better chances and in a very short amount of time a suitable privacy model. Knowledgeable data holders who already selected a privacy model but wish to get a second opinion can cross check their decision. If the tool disagrees with them, it is a sign, they need to investigate the matter further. Lastly, researchers could enrich their knowledge on data privacy in relational databases in one place because the tool also provides detailed information on all related privacy models.
-        </p>
-        <p>@Html.ActionLink("Learn more", "help", "home", new { id = "123" }, null)</p>
+        <h2>Application Actions</h2>
+        <ol>
+            <li>
+                @Html.ActionLink("Export Generated Data", "ExportExcelSheet", "GeneratedData")
+            </li>
+            <li>
+                @Html.ActionLink("Export Total Data", "TotalGeneratedData", "GeneratedData")
+            </li>
+        </ol>
     </div>
-</div>*@
+</div>
