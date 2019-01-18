@@ -33,6 +33,10 @@ namespace CSD.Web.Controllers
             {
                 return HttpNotFound();
             }
+
+            driver.StatsPerDays = db.StatsPerDay.Where(w => w.DriverId == driver.Id).ToList();
+            
+
             return View(driver);
         }
 

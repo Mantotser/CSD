@@ -30,5 +30,10 @@ namespace CSD.Dal.Entity
             KilometersPerDay = kilometersPerDay;
             AccidentsPerDay = accidentsPerDay;
         }
+
+        public StatsPerDay()
+        {
+
+        }
     }
 }

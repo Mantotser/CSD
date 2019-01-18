@@ -24,3 +24,30 @@
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
+
+<h4>Driver's Records</h4>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Day Of the Year</th>
+            <th>Total Penalties Per Day</th>
+            <th>Total Hours Per Day</th>
+            <th>Total Kilometers Per Day</th>
+            <th>Total Accidents Per Day</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var statsPerDay in Model.StatsPerDays)
+        {
+            <tr>
+                <td>@statsPerDay.DayCount</td>
+                <td>@statsPerDay.PenaltyCountPerDay</td>
+                <td>@statsPerDay.DriveTimePerDay</td>
+                <td>@statsPerDay.KilometersPerDay</td>
+                <td>@statsPerDay.AccidentsPerDay</td>
+            </tr>
+        }
+    </tbody>
+</table>
