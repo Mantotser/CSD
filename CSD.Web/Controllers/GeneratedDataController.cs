@@ -141,7 +141,7 @@ namespace CSD.Web.Controllers
 
                 return File(memoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "GeneratedData.xlsx");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -153,9 +153,9 @@ namespace CSD.Web.Controllers
             {
                 var drivers = db.Drivers.ToList();
 
-                Workbook workbook = ExcelHelper.GetExcelGeneratedData(drivers);
+                List<DriverStats> driverStatsList = ExcelHelper.GetTotalDriverStats(drivers);
 
-                Workbook totalWorkBook = ExcelHelper.GetExcelTotalData(drivers, workbook);
+                Workbook totalWorkBook = ExcelHelper.GetExcelTotalData(driverStatsList);
 
                 // Saves the excel file
                 var memoryStream = new MemoryStream();
@@ -165,12 +165,34 @@ namespace CSD.Web.Controllers
 
                 return File(memoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "TotalGeneratedData.xlsx");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
         }
 
+        public ActionResult WorstPerKmData()
+        {
+            try
+            {
+                var drivers = db.Drivers.ToList();
+
+                List<DriverStats> driverStatsList = ExcelHelper.GetTotalDriverStats(drivers);
+                Workbook workBook = ExcelHelper.GetExcelTenWorstPerKm(driverStatsList.OrderByDescending(o => o.TotalPenaltiesPerKm).Take(10).ToList());
+
+                // Saves the excel file
+                var memoryStream = new MemoryStream();
+                workBook.Save(memoryStream, SaveFormat.Xlsx);
+
+                memoryStream.Seek(0, SeekOrigin.Begin);
+
+                return File(memoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "TotalGeneratedData.xlsx");
+            }
+            catch (Exception)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

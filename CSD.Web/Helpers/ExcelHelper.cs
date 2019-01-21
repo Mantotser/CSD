@@ -35,57 +35,15 @@ namespace CSD.Web.Helpers
                     worksheet.Cells[driverCount, 4].PutValue(driver.StatsPerDays.SingleOrDefault(s => s.DayCount == y).PenaltyCountPerDay);
                     driverCount++;
                 }
-                worksheet.AutoFitColumn(0);
-                worksheet.AutoFitColumn(1);
-                worksheet.AutoFitColumn(2);
-                worksheet.AutoFitColumn(3);
-                worksheet.AutoFitColumn(4);
+                AutoFitColumns(worksheet);
             }
             return workbook;
         }
 
-        public static Workbook GetExcelTotalData(List<Driver> drivers, Workbook workbook)
+        public static Workbook GetExcelTotalData(List<DriverStats> driverStatsList)
         {
             var totalWorkBook = new Workbook();
             totalWorkBook.Worksheets.Add();
-            var driverStatsList = new List<DriverStats>();
-
-            foreach (var driver in drivers)
-            {
-                var totalKm = 0;
-                var totalHours = 0;
-                var totalAccidents = 0;
-                var totalPenalties = 0;
-                foreach (var worksheet in workbook.Worksheets)
-                {
-                    Cells cells = worksheet.Cells;
-                    FindOptions findOptions = new FindOptions
-                    {
-                        CaseSensitive = false,
-                        LookInType = LookInType.Values
-                    };
-                    Cell foundCell = cells.Find(driver.LicensePlate, null, findOptions);
-
-                    if (foundCell != null)
-                    {
-                        int row = foundCell.Row;
-                        string name = foundCell.Name;
-                        totalKm += (int)worksheet.Cells[row, 1].Value;
-                        totalHours += (int)worksheet.Cells[row, 2].Value;
-                        totalAccidents += (int)worksheet.Cells[row, 3].Value;
-                        totalPenalties += (int)worksheet.Cells[row, 4].Value;
-                    }
-                }
-                driverStatsList.Add(new DriverStats
-                {
-                    LicensePlate = driver.LicensePlate,
-                    TotalAcidents = totalAccidents,
-                    TotalHours = totalHours,
-                    TotalKM = totalKm,
-                    TotalPenalties = totalPenalties
-                });
-            }
-
             Worksheet workSheet = totalWorkBook.Worksheets[0];
             var driverCount = 0;
             workSheet.Cells[0, 0].PutValue("Driver License Plate");
@@ -102,13 +60,64 @@ namespace CSD.Web.Helpers
                 workSheet.Cells[driverCount, 3].PutValue(driverStat.TotalAcidents);
                 workSheet.Cells[driverCount, 4].PutValue(driverStat.TotalPenalties);
             }
-            workSheet.AutoFitColumn(0);
-            workSheet.AutoFitColumn(1);
-            workSheet.AutoFitColumn(2);
-            workSheet.AutoFitColumn(3);
-            workSheet.AutoFitColumn(4);
-
+            AutoFitColumns(workSheet);
             return totalWorkBook;
         }
+
+        private static void AutoFitColumns(Worksheet worksheet)
+        {
+            for (int i = 0; i <= 5; i++)
+            {
+                worksheet.AutoFitColumn(i);
+            }
+        }
+
+        public static List<DriverStats> GetTotalDriverStats(List<Driver> drivers)
+        {
+            var driverStatsList = new List<DriverStats>();
+
+            foreach (var driver in drivers)
+            {
+                driverStatsList.Add(
+                    new DriverStats
+                    {
+                        LicensePlate = driver.LicensePlate,
+                        TotalKM = driver.StatsPerDays.Sum(s => s.KilometersPerDay),
+                        TotalPenalties = driver.StatsPerDays.Sum(s => s.PenaltyCountPerDay),
+                        TotalHours = driver.StatsPerDays.Sum(s => s.DriveTimePerDay),
+                        TotalAcidents = driver.StatsPerDays.Sum(s => s.AccidentsPerDay),
+                    }
+                );
+            }
+
+            return driverStatsList;
+        }
+
+        public static Workbook GetExcelTenWorstPerKm(List<DriverStats> driverStatsList)
+        {
+            var totalWorkBook = new Workbook();
+            totalWorkBook.Worksheets.Add();
+            Worksheet workSheet = totalWorkBook.Worksheets[0];
+            var driverCount = 0;
+            workSheet.Cells[0, 0].PutValue("Driver License Plate");
+            workSheet.Cells[0, 1].PutValue("Total kilometers per period");
+            workSheet.Cells[0, 2].PutValue("Total drive hours per period");
+            workSheet.Cells[0, 3].PutValue("Total accidents per period");
+            workSheet.Cells[0, 4].PutValue("Total penalties per period");
+            workSheet.Cells[0, 5].PutValue("Ratio of (Total Penalties)/(Total Km)");
+            foreach (var driverStat in driverStatsList)
+            {
+                driverCount += 1;
+                workSheet.Cells[driverCount, 0].PutValue(driverStat.LicensePlate);
+                workSheet.Cells[driverCount, 1].PutValue(driverStat.TotalKM);
+                workSheet.Cells[driverCount, 2].PutValue(driverStat.TotalHours);
+                workSheet.Cells[driverCount, 3].PutValue(driverStat.TotalAcidents);
+                workSheet.Cells[driverCount, 4].PutValue(driverStat.TotalPenalties);
+                workSheet.Cells[driverCount, 5].PutValue(driverStat.TotalPenaltiesPerKm);
+            }
+            AutoFitColumns(workSheet);
+            return totalWorkBook;
+        }
+
     }
 }
