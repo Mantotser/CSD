@@ -8,10 +8,11 @@ namespace CSD.Web.ViewModels
     public class DriverStats
     {
         public string LicensePlate { get; set; }
-        public int TotalHours { get; set; }
+        public double TotalHours { get; set; }
         public int TotalKM { get; set; }
         public int TotalPenalties { get; set; }
         public int TotalAcidents { get; set; }
+        public int TotalTrips { get; set; }
 
         public double TotalPenaltiesPerKm
         {
@@ -25,7 +26,15 @@ namespace CSD.Web.ViewModels
         {
             get
             {
-                return (double)TotalPenalties / TotalHours;
+                return TotalPenalties / TotalHours;
+            }
+        }
+
+        public double TotalPenaltiesPerTrip
+        {
+            get
+            {
+                return (double)TotalPenalties / TotalTrips;
             }
         }
     }

@@ -171,14 +171,33 @@ namespace CSD.Web.Controllers
             }
         }
 
-        public ActionResult WorstPerKmData()
+        public ActionResult WorstTenDrivers(string type)
         {
             try
             {
                 var drivers = db.Drivers.ToList();
 
                 List<DriverStats> driverStatsList = ExcelHelper.GetTotalDriverStats(drivers);
-                Workbook workBook = ExcelHelper.GetExcelTenWorstPerKm(driverStatsList.OrderByDescending(o => o.TotalPenaltiesPerKm).Take(10).ToList());
+                Workbook workBook = new Workbook();
+                string excelName = "Worst";
+                switch (type)
+                {
+                    case "km":
+                        excelName = "TenWorstDriversPerKm";
+                        workBook = ExcelHelper.GetExcelTenWorst(driverStatsList.OrderByDescending(o => o.TotalPenaltiesPerKm).Take(10).ToList(), "Ratio of (Total Penalties) / (Total Km)", TypeOfCalculationEnum.PerKm);
+                        break;
+                    case "h":
+                        excelName = "TenWorstDriversPerTrip";
+                        workBook = ExcelHelper.GetExcelTenWorst(driverStatsList.OrderByDescending(o => o.TotalPenaltiesPerPeriod).Take(10).ToList(), "Ratio of (Total Penalties) / (Total Hr)", TypeOfCalculationEnum.PerHr);
+                        break;
+                    case "trip":
+                        excelName = "TenWorstDriversPerTrip";
+                        workBook = ExcelHelper.GetExcelTenWorst(driverStatsList.OrderByDescending(o => o.TotalPenaltiesPerTrip).Take(10).ToList(), "Ratio of (Total Penalties) / (Total Trips)", TypeOfCalculationEnum.PerTrip);
+                        break;
+                    default:
+                        break;
+                }
+
 
                 // Saves the excel file
                 var memoryStream = new MemoryStream();
@@ -186,7 +205,7 @@ namespace CSD.Web.Controllers
 
                 memoryStream.Seek(0, SeekOrigin.Begin);
 
-                return File(memoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "TotalGeneratedData.xlsx");
+                return File(memoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{excelName}.xlsx");
             }
             catch (Exception)
             {

@@ -9,11 +9,12 @@ namespace CSD.Dal.Entity
     public class StatsPerDay
     {
         public int Id { get; set; }
-        public int DriveTimePerDay { get; set; }
+        public double DriveTimePerDay { get; set; }
         public int PenaltyCountPerDay { get; set; }
         public int KilometersPerDay { get; set; }
         public int AccidentsPerDay { get; set; }
         public int DayCount { get; set; }
+        public int DrivingTrips { get; set; }
 
         // Foreign Key
         public int DriverId { get; set; }
@@ -22,13 +23,14 @@ namespace CSD.Dal.Entity
         public Driver Driver { get; set; }
 
 
-        public StatsPerDay(int dayCount, int driveTimePerDay, int penaltyCountPerDay, int kilometersPerDay, int accidentsPerDay)
+        public StatsPerDay(int dayCount, int driveTimePerDay, int penaltyCountPerDay, int kilometersPerDay, int accidentsPerDay, int drivingTrips)
         {
             DayCount = dayCount;
             DriveTimePerDay = driveTimePerDay;
             PenaltyCountPerDay = penaltyCountPerDay;
             KilometersPerDay = kilometersPerDay;
             AccidentsPerDay = accidentsPerDay;
+            DrivingTrips = drivingTrips;
         }
 
         public StatsPerDay()

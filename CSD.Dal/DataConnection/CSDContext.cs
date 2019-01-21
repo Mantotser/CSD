@@ -12,7 +12,7 @@ namespace CSD.Dal.DataConnection
     {
         public CSDContext() : base("CSDConnection")
         {
-
+            
         }
 
         public DbSet<Driver> Drivers { get; set; }

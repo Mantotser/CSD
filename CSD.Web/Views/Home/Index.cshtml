@@ -20,10 +20,13 @@
                 @Html.ActionLink("Export Total Data", "TotalGeneratedData", "GeneratedData")
             </li>
             <li>
-                @Html.ActionLink("Export 10 worst drivers per km", "WorstPerKmData", "GeneratedData")
+                @Html.ActionLink("Export 10 worst drivers per km", "WorstTenDrivers", "GeneratedData", new { type = "km" }, null)
             </li>
             <li>
-                @Html.ActionLink("Export 10 worst drivers per h", "WorstPerHrData", "GeneratedData")
+                @Html.ActionLink("Export 10 worst drivers per h", "WorstTenDrivers", "GeneratedData", new { type = "h" }, null)
+            </li>
+            <li>
+                @Html.ActionLink("Export 10 worst drivers per trips", "WorstTenDrivers", "GeneratedData", new { type = "trip" }, null)
             </li>
         </ol>
     </div>

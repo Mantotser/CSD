@@ -6,7 +6,10 @@ namespace CSD.Dal.Migrations
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Data.Entity.Validation;
+    using MathNet.Numerics.Distributions;
+    using MathNet.Numerics.Random;
     using System.Linq;
+    using MathNet.Numerics;
 
     internal sealed class Configuration : DbMigrationsConfiguration<CSD.Dal.DataConnection.CSDContext>
     {
@@ -51,7 +54,26 @@ namespace CSD.Dal.Migrations
                     var records = new List<StatsPerDay>();
                     for (int y = 1; y <= 365; y++)
                     {
-                        records.Add(new StatsPerDay(y, random.Next(25), random.Next(25), random.Next(1000), random.Next(2)));
+                        // TODO: fix medians and deviations
+                        //var ranDriveTime = new Normal(308, 100);
+                        //var ranDrivePenalty = new Normal(0.1, 0.1);
+                        //var ranDriveKm = new Normal(18488, 10000);
+                        //var ranDriveAccidents = new Normal(1/30000, 1/30000);
+                        //var ranDriveTrips = new Normal(818, 300);
+                        //records.Add(
+                        //    new StatsPerDay(y, 
+                        //    ranDriveTime.RandomSource.Next(), 
+                        //    ranDrivePenalty.RandomSource.Next(),
+                        //    ranDriveKm.RandomSource.Next(),
+                        //    ranDriveAccidents.RandomSource.Next(),
+                        //    ranDriveTrips.RandomSource.Next()
+                        //    ));
+                        var ranDriveTime = Math.Abs((int)Generate.Normal(1, 308 / 365, 1.2).First());
+                        var ranDrivePenalty = Math.Abs((int)Generate.Normal(1, 0.1, 0.6).First());
+                        var ranDriveKm = Math.Abs((int)Generate.Normal(1, 18488 / 365, 10000 / 365).First());
+                        var ranDriveAccidents = Math.Abs((int)Generate.Normal(1, 1 / 30000, 0.3).First());
+                        var ranDriveTrips = Math.Abs((int)Generate.Normal(1, 818 / 365, 3).First());
+                        records.Add(new StatsPerDay(y, ranDriveTime, ranDrivePenalty, ranDriveKm, ranDriveAccidents, ranDriveTrips));
                     }
                     driver.StatsPerDays = records;
                 }
